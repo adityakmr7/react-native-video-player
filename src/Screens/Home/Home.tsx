@@ -1,14 +1,24 @@
 import * as MediaLibrary from "expo-media-library";
 import * as Permissions from "expo-permissions";
 import React, { useEffect, useState } from "react";
-import { Text, View } from "react-native";
+import { Text, View, StyleSheet, Dimensions } from "react-native";
 import {
   ScrollView,
   TouchableWithoutFeedback,
 } from "react-native-gesture-handler";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { StackNavProps } from "..";
 
+import { StackNavProps } from "..";
+const { width: wWidth, height: wHeight } = Dimensions.get("window");
+
+const styles = StyleSheet.create({
+  mediaCard: {
+    height: wWidth / 6,
+    width: wWidth,
+    borderWidth: StyleSheet.hairlineWidth,
+    justifyContent: "center",
+    paddingLeft: 5,
+  },
+});
 const Home = ({ navigation }: StackNavProps<"home">) => {
   const [mediaFile, setMediaFile] = useState<MediaLibrary.Asset[]>([]);
   useEffect(() => {
@@ -23,6 +33,7 @@ const Home = ({ navigation }: StackNavProps<"home">) => {
     if (status === "granted") {
       const media = await MediaLibrary.getAssetsAsync(options);
       const { assets } = media;
+
       setMediaFile(assets);
     } else {
       console.log("Ohh No Permissions Granted");
@@ -30,29 +41,27 @@ const Home = ({ navigation }: StackNavProps<"home">) => {
   };
 
   return (
-    <SafeAreaView>
-      <ScrollView>
-        {mediaFile.map((item, index) => {
-          return (
-            <TouchableWithoutFeedback
-              style={{ padding: 10, borderRadius: 5, borderColor: "grey" }}
-              key={index}
-              onPress={() => {
-                navigation.navigate("video", {
-                  item,
-                });
-              }}
-            >
+    <ScrollView>
+      {mediaFile.map((item, index) => {
+        return (
+          <TouchableWithoutFeedback
+            style={{ borderRadius: 5, borderColor: "grey" }}
+            key={index}
+            onPress={() => {
+              navigation.navigate("video", {
+                item,
+              });
+            }}
+          >
+            <View style={styles.mediaCard}>
               <View>
-                <View>
-                  <Text>{item.filename}</Text>
-                </View>
+                <Text>{item.filename}</Text>
               </View>
-            </TouchableWithoutFeedback>
-          );
-        })}
-      </ScrollView>
-    </SafeAreaView>
+            </View>
+          </TouchableWithoutFeedback>
+        );
+      })}
+    </ScrollView>
   );
 };
 

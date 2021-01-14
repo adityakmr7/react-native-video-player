@@ -23,7 +23,11 @@ const StackScreen = () => {
   return (
     <NavigationContainer>
       <AppStack.Navigator>
-        <AppStack.Screen name="home" component={Home} />
+        <AppStack.Screen
+          name="home"
+          options={{ title: "XPlayer" }}
+          component={Home}
+        />
         <AppStack.Screen
           options={{ headerShown: false }}
           name="video"
