@@ -26,7 +26,7 @@ const Home = ({ navigation }: StackNavProps<"home">) => {
   }, []);
 
   const getMediaFiles = async () => {
-    const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
+    const { status } = await Permissions.askAsync(Permissions.MEDIA_LIBRARY);
     const options = {
       mediaType: MediaLibrary.MediaType.video,
     };
