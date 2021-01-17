@@ -13,6 +13,7 @@ import {
 } from "react-native-gesture-handler";
 const { width: wWidth, height: wHeight } = Dimensions.get("window");
 const ICON_SIZE = 30;
+const TASK_BAR_HEIGHT = 60;
 
 const Video = ({ navigation, route }: StackNavProps<"video">) => {
   const { item } = route.params;
@@ -20,9 +21,8 @@ const Video = ({ navigation, route }: StackNavProps<"video">) => {
   const [showStatus, setShowStatus] = useState(true);
   const [seekPosition, setSeekPosition] = useState<number>(0);
   const [maxSeek, setMaxSeek] = useState(0);
+  const [mute, setMute] = useState(false);
   const [play, setPlay] = useState(false);
-
-  const videoRef = useRef(null);
 
   useEffect(() => {
     setVideoInfo(item);
@@ -83,7 +83,6 @@ const Video = ({ navigation, route }: StackNavProps<"video">) => {
   };
   const _sliderValueChange = (value: any) => {
     console.log("_sliderVal", value);
-
     const v = parseInt(value);
   };
   const _refFunction = async (component: any) => {
@@ -100,11 +99,12 @@ const Video = ({ navigation, route }: StackNavProps<"video">) => {
           source={{ uri: item.uri }}
           rate={1.0}
           volume={1.0}
-          isMuted={false}
+          isMuted={mute}
           resizeMode="cover"
           shouldPlay={play}
           isLooping
           onPlaybackStatusUpdate={_playBackStatus}
+          useNativeControls={true}
         />
         <View
           style={{
@@ -120,11 +120,12 @@ const Video = ({ navigation, route }: StackNavProps<"video">) => {
             style={{ height: "100%", width: "100%" }}
             onPress={() => setPlay(!play)}
           >
+            <View style={{ flex: 1 }} />
             <View style={{ flex: 1, justifyContent: "center" }}>
               <View
                 style={{
                   alignItems: "center",
-                  justifyContent: "center",
+                  justifyContent: "space-between",
                   flexDirection: "row",
                   alignSelf: "center",
                 }}
@@ -132,13 +133,28 @@ const Video = ({ navigation, route }: StackNavProps<"video">) => {
                 {!play ? <Icon name="play" size={50} color={"white"} /> : null}
               </View>
             </View>
+            <View style={{ flex: 1 }}>
+              <Slider
+                style={{
+                  width: 100,
+                  height: 300,
+                  transform: [{ rotate: "90deg" }],
+                  paddingBottom: 50,
+                }}
+                minimumValue={1}
+                maximumValue={10}
+                value={50}
+                minimumTrackTintColor="#FFFFFF"
+                maximumTrackTintColor="#000000"
+              />
+            </View>
           </TouchableOpacity>
           {/* Top TaskBar */}
           <View
             style={{
               position: "absolute",
               top: 0,
-              height: 60,
+              height: TASK_BAR_HEIGHT,
               backgroundColor: "black",
               width: "100%",
             }}
@@ -200,7 +216,7 @@ const Video = ({ navigation, route }: StackNavProps<"video">) => {
               style={{
                 paddingTop: 10,
                 flexDirection: "row",
-                justifyContent: "center",
+                justifyContent: "space-around",
               }}
             >
               <View>
@@ -217,6 +233,15 @@ const Video = ({ navigation, route }: StackNavProps<"video">) => {
               </View>
               <View>
                 <Icon name="skip-forward" size={ICON_SIZE} color="white" />
+              </View>
+              <View>
+                <TouchableOpacity onPress={() => setMute(!mute)}>
+                  {!mute ? (
+                    <Icon name="volume" size={ICON_SIZE} color="white" />
+                  ) : (
+                    <Icon name="volume-x" size={ICON_SIZE} color="white" />
+                  )}
+                </TouchableOpacity>
               </View>
             </View>
           </View>
